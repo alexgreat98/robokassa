@@ -12,6 +12,7 @@
 namespace Idma\Robokassa;
 
 use Idma\Robokassa\Exception\InvalidSumException;
+use Idma\Robokassa\Exception\InvalidSumCurrencyException;
 use Idma\Robokassa\Exception\InvalidParamException;
 use Idma\Robokassa\Exception\InvalidInvoiceIdException;
 use Idma\Robokassa\Exception\EmptyDescriptionException;
@@ -62,6 +63,7 @@ class Payment
             'MerchantLogin' => $this->login,
             'InvId' => null,
             'OutSum' => 0,
+            'OutSumCurrency' => null,
             'Desc' => null,
             'SignatureValue' => '',
             'Encoding' => 'utf-8',
@@ -94,13 +96,18 @@ class Payment
             throw new InvalidInvoiceIdException();
         }
 
-        $signature = vsprintf('%s:%01.2f:%u:%s', [
-            // '$login:$OutSum:$InvId:$passwordPayment'
+        $signature = vsprintf('%s:%01.2f:%u:', [
+            // '$login:$OutSum:$InvId:'
             $this->login,
             $this->data['OutSum'],
-            $this->data['InvId'],
-            $this->paymentPassword
+            $this->data['InvId']
         ]);
+
+        if ($this->data['OutSumCurrency']) {
+            $signature .= $this->data['OutSumCurrency'] . ':';
+        }
+
+        $signature .= $this->paymentPassword;
 
         if ($this->customParams) {
             // sort params alphabetically
@@ -305,6 +312,33 @@ class Payment
         }
 
         throw new InvalidSumException();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSumCurrency()
+    {
+        return $this->data['OutSumCurrency'];
+    }
+
+    /**
+     * @param  mixed $summ
+     *
+     * @throws InvalidSumException
+     *
+     * @return Payment
+     */
+    public function setSumCurrency($sum_currency)
+    {
+        $sum_currency = strtoupper($sum_currency);
+
+        if (in_array($sum_currency, ['USD', 'EUR', 'KZT'])) {
+            $this->data['OutSumCurrency'] = $sum_currency;
+            return $this;
+        }
+
+        throw new InvalidSumCurrencyException();
     }
 
     /**
