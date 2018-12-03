@@ -166,17 +166,13 @@ class Payment
 
         $password = $this->{$passwordType . 'Password'};
 
-        $signature = vsprintf('%s:%u:', [
+        $signature = vsprintf('%s:%u:%s%s', [
             // '$OutSum:$InvId:$password[:$params]'
             $data['OutSum'],
-            $data['InvId']
+            $data['InvId'],
+            $password,
+            $this->getCustomParamsString($this->data)
         ]);
-
-        if (isset($data['OutSumCurrency'])) {
-            $signature .= $data['OutSumCurrency'] . ':';
-        }
-
-        $signature .= $password . $this->getCustomParamsString($this->data);
 
         $this->valid = ($this->getHash($signature) === strtolower($data['SignatureValue']));
 
