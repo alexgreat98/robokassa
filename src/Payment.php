@@ -323,7 +323,11 @@ class Payment
      */
     public function getSumCurrency()
     {
-        return $this->data['OutSumCurrency'];
+        if (isset($this->data['OutSumCurrency'])) {
+            return $this->data['OutSumCurrency'];
+        }
+
+        return null;
     }
 
     /**
