@@ -59,7 +59,7 @@ class Payment
         $this->validationPassword = $validationPassword;
         $this->isTestMode = $testMode;
 
-        $this->data = array_filter([
+        $this->data = [
             'MerchantLogin' => $this->login,
             'InvId' => null,
             'OutSum' => 0,
@@ -69,7 +69,7 @@ class Payment
             'Encoding' => 'utf-8',
             'Culture' => self::CULTURE_RU,
             'IncCurrLabel' => ''
-        ]);
+        ];
         if ($testMode) {
             $this->data['IsTest'] = 1;
         }
