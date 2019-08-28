@@ -47,10 +47,10 @@ class Payment
     /**
      * Class constructor.
      *
-     * @param  string $login login of Merchant
-     * @param  string $paymentPassword password #1
-     * @param  string $validationPassword password #2
-     * @param  bool $testMode use test server
+     * @param string $login login of Merchant
+     * @param string $paymentPassword password #1
+     * @param string $validationPassword password #2
+     * @param bool $testMode use test server
      */
     public function __construct($login, $paymentPassword, $validationPassword, $testMode = false)
     {
@@ -68,19 +68,21 @@ class Payment
             'SignatureValue' => '',
             'Encoding' => 'utf-8',
             'Culture' => self::CULTURE_RU,
-            'IncCurrLabel' => '',
-            'IsTest' => $testMode ? 1 : 0
+            'IncCurrLabel' => ''
         ];
+        if ($testMode) {
+            $this->data['IsTest'] = 1;
+        }
     }
 
     /**
      * Create payment url.
      *
-     * @throws InvalidSumException       if sum less or equals zero
+     * @return string the payment url
      * @throws EmptyDescriptionException if description is empty or not provided
      * @throws InvalidInvoiceIdException if invoice ID less or equals zero or not provided
      *
-     * @return string the payment url
+     * @throws InvalidSumException       if sum less or equals zero
      */
     public function getPaymentUrl()
     {
@@ -126,7 +128,7 @@ class Payment
     /**
      * Validates on ResultURL.
      *
-     * @param  array $data query data
+     * @param array $data query data
      *
      * @return bool
      */
@@ -138,7 +140,7 @@ class Payment
     /**
      * Validates on SuccessURL.
      *
-     * @param  array $data query data
+     * @param array $data query data
      *
      * @return bool
      */
@@ -150,8 +152,8 @@ class Payment
     /**
      * Validates the Robokassa query.
      *
-     * @param  array $data query data
-     * @param  string $passwordType type of password, 'validation' or 'payment'
+     * @param array $data query data
+     * @param string $passwordType type of password, 'validation' or 'payment'
      *
      * @return bool
      */
@@ -193,11 +195,11 @@ class Payment
      * Adds custom parameters in payment.
      * The 'shp_' prefix will be added automatically.
      *
-     * @param  array $params custom parameters array
-     *
-     * @throws InvalidParamException if params is not an array
+     * @param array $params custom parameters array
      *
      * @return Payment
+     * @throws InvalidParamException if params is not an array
+     *
      */
     public function addCustomParameters($params)
     {
@@ -251,7 +253,7 @@ class Payment
     /**
      * Get custom parameter from payment data.
      *
-     * @param  string $name parameter name without "shp_"
+     * @param string $name parameter name without "shp_"
      *
      * @return mixed
      */
@@ -295,11 +297,11 @@ class Payment
     }
 
     /**
-     * @param  mixed $summ
-     *
-     * @throws InvalidSumException
+     * @param mixed $summ
      *
      * @return Payment
+     * @throws InvalidSumException
+     *
      */
     public function setSum($summ)
     {
@@ -327,11 +329,11 @@ class Payment
     }
 
     /**
-     * @param  mixed $summ
-     *
-     * @throws InvalidSumException
+     * @param mixed $summ
      *
      * @return Payment
+     * @throws InvalidSumException
+     *
      */
     public function setSumCurrency($sum_currency)
     {
@@ -354,7 +356,7 @@ class Payment
     }
 
     /**
-     * @param  string $description
+     * @param string $description
      *
      * @return Payment
      */
@@ -374,7 +376,7 @@ class Payment
     }
 
     /**
-     * @param  string $culture
+     * @param string $culture
      *
      * @return Payment
      */
@@ -394,7 +396,7 @@ class Payment
     }
 
     /**
-     * @param  string $currLabel
+     * @param string $currLabel
      *
      * @return Payment
      */
